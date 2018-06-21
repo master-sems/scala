@@ -8,6 +8,7 @@ import Util._
 abstract class Token
 case class T_Int (field1: Int) extends Token
 case class T_Ident (field1: String) extends Token
+case class T_PRAGMA () extends Token
 case class T_PROCEDURE () extends Token
 case class T_IS () extends Token
 case class T_IN () extends Token
@@ -48,7 +49,7 @@ object Lexer {
     List((":=", T_ASSIGN()), ("<=", T_LESSEQ()), (">=", T_GREATEREQ()), (":", T_COLON()), (",", T_COMMA()), ("=", T_EQUAL()), ("+", T_PLUS()), ("-", T_MINUS()), ("*", T_TIMES()), ("/", T_SLASH()), (";", T_SEMI()), ("<", T_LESS()), (">", T_GREATER()), ("(", T_LPAR()), (")", T_RPAR()), ("{", T_LCURL()), ("}", T_RCURL()), ("[", T_LSQUARE()), ("]", T_RSQUARE()))
   }
   def keywords: List[(String, Token)] = {
-    List(("procedure", T_PROCEDURE()), ("is", T_IS()), ("in", T_IN()), ("out", T_OUT()), ("while", T_WHILE()), ("if", T_IF()), ("then", T_THEN()), ("else", T_ELSE()), ("end", T_END()), ("begin", T_BEGIN()), ("loop", T_LOOP()), ("and", T_AND()), ("or", T_OR()), ("return", T_RETURN()))
+    List(("pragma", T_PRAGMA()), ("procedure", T_PROCEDURE()), ("is", T_IS()), ("in", T_IN()), ("out", T_OUT()), ("while", T_WHILE()), ("if", T_IF()), ("then", T_THEN()), ("else", T_ELSE()), ("end", T_END()), ("begin", T_BEGIN()), ("loop", T_LOOP()), ("and", T_AND()), ("or", T_OR()), ("return", T_RETURN()))
   }
   val tokens_to_symbols_and_keywords = switch((symbols ++ keywords))
   

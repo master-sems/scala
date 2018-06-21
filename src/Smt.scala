@@ -4,6 +4,8 @@ import scala.collection.mutable.Set
 
 object Smt {
   
+  def reserved = List("true", "false", "pre", "post")
+  
   def getAllVars(l: Exp): Set[String] = l match {
     case IntCst(i) => Set()
     case Var(v) => Set(v)
@@ -13,7 +15,7 @@ object Smt {
   def getAllVars(l: List[(String, Exp)]): Set[String] = {
     var set: Set[String] = Set()
     for ((v, e) <- l) {
-      if (v != "true" && v != "false")
+      if (!reserved.contains(v))
         set = set ++ Set(v)
       set = set ++ getAllVars(e)
     }
@@ -39,6 +41,14 @@ object Smt {
     }
   }
   
+  def split(l: List[(String, Exp)]): List[List[(String, Exp)]] = l match {
+    case Nil => Nil
+    case ("assert", e1) :: ("assume", e2) :: tl =>
+      val (h::t) = split(tl)
+      List(("post", e1)) :: (("pre", e2)::h) :: t 
+      
+  }
+  
   def smtDisplayAll(l: List[(String, Exp)]): Unit = {
     val vars = getAllVars(l)    
     println;
@@ -49,15 +59,17 @@ object Smt {
     println("; Solve")
     println("(check-sat)")
     println("(get-model)")
+    println;
+    
   }
   
   def main(args: Array[String]): Unit = {
-    val c = Parser.parseFile("resources/test1.adb")
+    val c = Parser.parseFile("resources/test2.adb")
     val m = Map("inf" -> 2, "sup" -> 15)
     println(m)
-    val p = Interpret.traceComm(c, m)
-    println(p)
-    println(m)
+    //val p = Interpret.traceComm(c, m)
+    //println(p)
+    //println(m)
     
     val ds = Queue(true, true, true, true, true, true, false)
     val versions: Map[String, Int] = Map()

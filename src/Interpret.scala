@@ -80,6 +80,8 @@ object Interpret {
   def symbolic(c: Comm, ds: Queue[Boolean], versions: Map[String, Int]): List[(String, Exp)] = c match {
     case Null() => List()
     
+    case Pragma(v, e) => List((v, numExp(e, versions)))
+    
     case Assign(v, e) => {
       val k: Int = 1 + versions.getOrElse(v, 0)
       val l = List((v + "_" + k, numExp(e, versions)))

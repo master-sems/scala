@@ -30,6 +30,7 @@ case class Oper (field1: Operation, field2: Exp, field3: Exp) extends Exp
 
 abstract class Comm
 case class Null () extends Comm
+case class Pragma (field1: String, field2: Exp) extends Comm
 case class Assign (field1: String, field2: Exp) extends Comm
 case class Seq (field1: Comm, field2: Comm) extends Comm
 case class While (field1: Exp, field2: Comm) extends Comm
@@ -89,6 +90,22 @@ object Parser {
           } else {
             throw new Exception(("Syntax error line " + (String.valueOf(line) + (":" + (" expecting '" + (token_to_string(t) + ("'" + (" found '" + (token_to_string(tok) + "'")))))))))
           }
+      }
+    }
+  }
+  def parse_ident: (List[(Token, Int)]) => (String, List[(Token, Int)]) = {
+    (s: List[(Token, Int)]) => {
+      s match {
+        case Nil => 
+          throw new Exception("Unexpected EOF")
+        case (h :: s2) => 
+          val (tok, line) = h
+          tok match {
+            case T_Ident(v) => 
+              (v, s2)
+            case _ => 
+              throw new Exception(("Syntax error line " + (String.valueOf(line) + (":" + (" expecting an identifier" + (" found '" + (token_to_string(tok) + "'")))))))
+            }
       }
     }
   }
@@ -303,6 +320,10 @@ object Parser {
                 val s1 = parse((T_ASSIGN(), s0))
                 val (e, s2) = parse_exp(s1)
                 (Assign(v, e), s2)
+              case T_PRAGMA() => 
+                val (v, s1) = parse_ident(s0)
+                val (e, s2) = parse_decision(s1)
+                (Pragma(v, e), s2)
               case _ => 
                 throw new Exception(("Syntax error line " + String.valueOf(line)))
               }
